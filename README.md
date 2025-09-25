@@ -314,3 +314,32 @@ Run scripts:
 cd k6/foundations && K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_HOST=0.0.0.0 K6_WEB_DASHBOARD_PORT=5665 K6_WEB_DASHBOARD_PERIOD=2s K6_WEB_DASHBOARD_OPEN=true k6 run --linger 02.stages.js
 
 ```
+
+Prompt to make get educational explanations from tests: 
+
+```
+Can you help me analyze and improve the comments in this k6 test script? 
+
+Please follow the same comprehensive approach you used for 02.stages.js:
+
+1. **Analyze the current comments** - identify what's unclear, missing, or could be improved
+2. **Enhance the script documentation** with:
+   - Clear goal and purpose statement
+   - Specific usage instructions
+   - Expected outcomes (duration, load, request rates, total requests)
+   - Key metrics to monitor based on charts-understanding.md
+   - Dashboard analysis guidance (Overview, Timings, Summary tabs) based on the 'charts-understanding.md'
+   - Performance thresholds (good/warning/critical indicators)
+   - Detailed code explanations for the main logic
+
+3. **Make it educational** - ensure anyone can understand:
+   - What the script does and WHY
+   - How to run it and interpret results
+   - What to watch for during execution
+   - Performance implications of the configuration
+
+4. **Reference the charts-understanding.md file** for metric explanations and thresholds
+
+The goal is to transform this into a comprehensive learning resource that teaches k6 concepts while being immediately actionable for performance testing.
+
+```
