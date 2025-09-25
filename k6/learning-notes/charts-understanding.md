@@ -69,6 +69,7 @@ The Overview tab provides a high-level view of your test's performance with key 
   - *An iteration is one complete run of your test script (e.g., login → browse → purchase → logout)*
 - **HTTP Request Rate**: Number of HTTP requests per second  
   - *Total throughput your system is handling during the test*
+  - **Throughput** = How much work your system can process per unit of time (like cars per hour through a toll booth)
 - **HTTP Request Duration**: Average response time for HTTP requests
   - *How long users wait for pages/APIs to respond*
 - **HTTP Request Failed**: Percentage of failed HTTP requests
