@@ -8,6 +8,35 @@ The K6 dashboard provides three main tabs to analyze load test results. Each tab
 2. **Timings** - Detailed timing breakdown of HTTP requests
 3. **Summary** - Statistical summary of all metrics
 
+## Understanding Percentiles (p90, p95, p99)
+
+Percentiles are crucial statistical measures that help you understand the distribution of your performance data. They tell you what percentage of your users experience a certain response time or better.
+
+### What Percentiles Mean:
+
+- **p90 (90th percentile)**: 90% of all requests were faster than this value, 10% were slower
+- **p95 (95th percentile)**: 95% of all requests were faster than this value, 5% were slower  
+- **p99 (99th percentile)**: 99% of all requests were faster than this value, 1% were slower
+
+### Practical Example:
+If your p95 response time is 500ms, it means:
+- 95% of your users experienced response times of 500ms or faster
+- Only 5% of users experienced slower response times than 500ms
+
+### Why Percentiles Matter:
+- **Average** can be misleading due to outliers
+- **p95** represents the experience of most users (good target for SLAs)
+- **p99** captures worst-case scenarios that affect user satisfaction
+- Higher percentiles help identify performance outliers and edge cases
+
+### Key Terms Explained:
+- **TTFB (Time To First Byte)**: How long before the server starts sending response data
+- **Virtual Users (VUs)**: Simulated users running your test script concurrently
+- **Iteration**: One complete execution of your test script by a virtual user
+- **SLA (Service Level Agreement)**: Performance targets you commit to meet
+- **Connection Pool**: Reusable network connections to improve efficiency
+- **SSL/TLS Handshake**: Security negotiation process for HTTPS connections
+
 ---
 
 # 1. OVERVIEW TAB
@@ -17,54 +46,66 @@ The Overview tab provides a high-level view of your test's performance with key 
 ## Key Metrics Display
 
 ### Core Performance Indicators
+
 - **Iteration Rate**: Number of complete test iterations per second
-- **HTTP Request Rate**: Number of HTTP requests per second
+  - *An iteration is one complete run of your test script (e.g., login → browse → purchase → logout)*
+- **HTTP Request Rate**: Number of HTTP requests per second  
+  - *Total throughput your system is handling during the test*
 - **HTTP Request Duration**: Average response time for HTTP requests
+  - *How long users wait for pages/APIs to respond*
 - **HTTP Request Failed**: Percentage of failed HTTP requests
+  - *System reliability indicator - errors, timeouts, 5xx responses*
 - **Received Rate**: Data received from server per second
+  - *Download bandwidth usage - responses, images, files*
 - **Sent Rate**: Data sent to server per second
+  - *Upload bandwidth usage - form data, file uploads, API payloads*
 
 ## Charts in Overview Tab
 
 ### 1. HTTP Performance Overview Chart
-- **X-axis**: Timeline of test execution
+- **X-axis**: Timeline of test execution *(when things happened during your test)*
 - **Y-axis**: Dual scale (percentage for failure rate, rate for requests)
 - **Lines**: 
-  - Request Rate (requests/second)
-  - Request Duration (milliseconds)
-  - Request Failed Rate (percentage)
+  - **Request Rate** *(requests/second)* - How many HTTP requests your test is sending per second
+  - **Request Duration** *(milliseconds)* - How long each HTTP request takes to complete
+  - **Request Failed Rate** *(percentage)* - What percentage of requests are failing (errors, timeouts)
+- **What it shows**: Overall HTTP performance trends, correlation between load, response times, and error rates
 
 ### 2. Virtual Users (VUs) Chart
-- **X-axis**: Timeline of test execution
-- **Y-axis**: Number count
+- **X-axis**: Timeline of test execution *(when things happened during your test)*
+- **Y-axis**: Number count *(how many of something)*
 - **Lines**:
-  - Active Virtual Users (VUs)
-  - HTTP Requests count
+  - **Active Virtual Users (VUs)** - How many simulated users are running your test script right now
+  - **HTTP Requests count** - Total number of HTTP requests made so far
+- **What it shows**: Load generation patterns and the relationship between virtual users and actual request volume
 
 ### 3. Transfer Rate Chart
-- **X-axis**: Timeline of test execution
-- **Y-axis**: Data transfer rate (KB/s)
+- **X-axis**: Timeline of test execution *(when things happened during your test)*
+- **Y-axis**: Data transfer rate (KB/s) *(kilobytes per second)*
 - **Lines**:
-  - Data Received rate
-  - Data Sent rate
+  - **Data Received rate** - How much data per second your test is downloading from the server
+  - **Data Sent rate** - How much data per second your test is uploading to the server
+- **What it shows**: Network bandwidth utilization and data flow patterns between client and server
 
 ### 4. HTTP Request Duration Chart
-- **X-axis**: Timeline of test execution
-- **Y-axis**: Response time (milliseconds)
+- **X-axis**: Timeline of test execution *(when things happened during your test)*
+- **Y-axis**: Response time (milliseconds) *(how long requests take to complete)*
 - **Lines**:
-  - Average (avg)
-  - 90th percentile (p90)
-  - 95th percentile (p95)
-  - 99th percentile (p99)
+  - **Average (avg)** - The typical response time across all requests
+  - **90th percentile (p90)** - 90% of requests were faster than this time
+  - **95th percentile (p95)** - 95% of requests were faster than this time
+  - **99th percentile (p99)** - 99% of requests were faster than this time
+- **What it shows**: Response time distribution across different user experience levels, helping identify performance consistency and outliers
 
 ### 5. Iteration Duration Chart
-- **X-axis**: Timeline of test execution
-- **Y-axis**: Duration (seconds)
+- **X-axis**: Timeline of test execution *(when things happened during your test)*
+- **Y-axis**: Duration (seconds) *(how long each complete test scenario takes)*
 - **Lines**:
-  - Average iteration time
-  - 90th percentile (p90)
-  - 95th percentile (p95)
-  - 99th percentile (p99)
+  - **Average iteration time** - Typical time to complete one full test scenario
+  - **90th percentile (p90)** - 90% of test scenarios completed faster than this time
+  - **95th percentile (p95)** - 95% of test scenarios completed faster than this time  
+  - **99th percentile (p99)** - 99% of test scenarios completed faster than this time
+- **What it shows**: Complete test scenario execution time distribution, including all requests, think time, and processing within each iteration
 
 ## Overview Tab Decision Table
 
@@ -92,6 +133,19 @@ The Overview tab provides a high-level view of your test's performance with key 
 
 The Timings tab provides detailed breakdown of HTTP request lifecycle, showing where time is spent during each phase of the request-response cycle.
 
+## HTTP Request Lifecycle Phases
+
+Understanding the timing phases helps identify exactly where performance bottlenecks occur:
+
+1. **Blocked** → Waiting for available connection
+2. **Connecting** → Establishing TCP connection  
+3. **TLS Handshaking** → Securing the connection (HTTPS only)
+4. **Sending** → Uploading request data
+5. **Waiting** → Server processing time (TTFB - Time To First Byte)
+6. **Receiving** → Downloading response data
+
+*Total Duration = Blocked + Connecting + TLS + Sending + Waiting + Receiving*
+
 ## Charts in Timings Tab
 
 ### 1. Request Duration
@@ -109,53 +163,59 @@ The Timings tab provides detailed breakdown of HTTP request lifecycle, showing w
 - **What it shows**: System reliability and error trends
 
 ### 3. Request Rate
-- **Purpose**: Number of HTTP requests per second
-- **X-axis**: Timeline
-- **Y-axis**: Requests per second
+- **Purpose**: Number of HTTP requests per second *(how busy your test is)*
+- **X-axis**: Timeline *(when during the test)*
+- **Y-axis**: Requests per second *(how many HTTP calls per second)*
 - **Lines**: HTTP requests rate
-- **What it shows**: Load intensity and throughput
+- **What it shows**: Load intensity and throughput *(how much traffic your system is handling)*
 
 ### 4. Request Waiting
-- **Purpose**: Time spent waiting for server response (TTFB - Time To First Byte)
-- **X-axis**: Timeline
-- **Y-axis**: Duration (milliseconds)
-- **Lines**: avg, p90, p95, p99
-- **What it shows**: Server processing time and backend performance
+- **Purpose**: Time spent waiting for server response *(TTFB - Time To First Byte)*
+  - *This is how long your server takes to start responding after receiving a request*
+- **X-axis**: Timeline *(when during the test)*
+- **Y-axis**: Duration (milliseconds) *(waiting time)*
+- **Lines**: avg, p90, p95, p99 *(different percentile measurements)*
+- **What it shows**: Server processing time and backend performance *(how fast your server processes requests)*
 
 ### 5. TLS Handshaking
-- **Purpose**: Time spent establishing secure connection
-- **X-axis**: Timeline
-- **Y-axis**: Duration (milliseconds)
-- **Lines**: avg, p90, p95, p99
-- **What it shows**: SSL/TLS negotiation overhead
+- **Purpose**: Time spent establishing secure connection *(for HTTPS websites)*
+  - *This is the "handshake" process to set up encrypted communication*
+- **X-axis**: Timeline *(when during the test)*
+- **Y-axis**: Duration (milliseconds) *(handshake time)*
+- **Lines**: avg, p90, p95, p99 *(different percentile measurements)*
+- **What it shows**: SSL/TLS negotiation overhead *(extra time needed for security)*
 
 ### 6. Request Sending
-- **Purpose**: Time spent sending request data to server
-- **X-axis**: Timeline
-- **Y-axis**: Duration (microseconds/milliseconds)
-- **Lines**: avg, p90, p95, p99
-- **What it shows**: Upload bandwidth and network latency
+- **Purpose**: Time spent sending request data to server *(uploading your request)*
+  - *How long it takes to send your request data (forms, files, API calls) to the server*
+- **X-axis**: Timeline *(when during the test)*
+- **Y-axis**: Duration (microseconds/milliseconds) *(upload time)*
+- **Lines**: avg, p90, p95, p99 *(different percentile measurements)*
+- **What it shows**: Upload bandwidth and network latency *(your internet upload speed and connection quality)*
 
 ### 7. Request Connecting
-- **Purpose**: Time spent establishing TCP connection
-- **X-axis**: Timeline
-- **Y-axis**: Duration (milliseconds)
-- **Lines**: avg, p90, p95, p99
-- **What it shows**: Network connectivity and connection pooling efficiency
+- **Purpose**: Time spent establishing TCP connection *(making initial connection to server)*
+  - *This is like "dialing" the server before you can send any data*
+- **X-axis**: Timeline *(when during the test)*
+- **Y-axis**: Duration (milliseconds) *(connection time)*
+- **Lines**: avg, p90, p95, p99 *(different percentile measurements)*
+- **What it shows**: Network connectivity and connection pooling efficiency *(how fast you can connect and if connections are being reused)*
 
 ### 8. Request Receiving
-- **Purpose**: Time spent downloading response data
-- **X-axis**: Timeline
-- **Y-axis**: Duration (milliseconds)
-- **Lines**: avg, p90, p95, p99
-- **What it shows**: Download bandwidth and response size impact
+- **Purpose**: Time spent downloading response data *(getting the server's response)*
+  - *How long it takes to download the server's response (web pages, JSON data, files)*
+- **X-axis**: Timeline *(when during the test)*
+- **Y-axis**: Duration (milliseconds) *(download time)*
+- **Lines**: avg, p90, p95, p99 *(different percentile measurements)*
+- **What it shows**: Download bandwidth and response size impact *(your internet download speed and how big the responses are)*
 
 ### 9. Request Blocked
-- **Purpose**: Time spent waiting for available connection
-- **X-axis**: Timeline
-- **Y-axis**: Duration (milliseconds)
-- **Lines**: avg, p90, p95, p99
-- **What it shows**: Connection pool saturation and resource constraints
+- **Purpose**: Time spent waiting for available connection *(waiting in line to connect)*
+  - *When all connections are busy, new requests must wait for one to become available*
+- **X-axis**: Timeline *(when during the test)*
+- **Y-axis**: Duration (milliseconds) *(waiting time)*
+- **Lines**: avg, p90, p95, p99 *(different percentile measurements)*
+- **What it shows**: Connection pool saturation and resource constraints *(if your system is running out of available connections)*
 
 ## Timings Tab Decision Table
 
