@@ -29,6 +29,24 @@ If your p95 response time is 500ms, it means:
 - **p99** captures worst-case scenarios that affect user satisfaction
 - Higher percentiles help identify performance outliers and edge cases
 
+### What Are Outliers?
+**Outliers** are extreme values that are very different from the typical performance measurements. They can dramatically skew your average and give you a false picture of system performance.
+
+**Examples of Outliers in Performance Testing:**
+- Most requests take 100ms, but a few take 10,000ms (10 seconds) due to database timeouts
+- 99% of requests succeed, but 1% fail due to temporary network issues
+- Regular response times are 200ms, but garbage collection causes occasional 5-second spikes
+
+**Why Outliers Matter:**
+- **Average gets skewed**: If 99 requests take 100ms and 1 request takes 10,000ms, the average becomes 199ms (misleading!)
+- **Real user impact**: Even if outliers are rare, they represent real users having a bad experience
+- **System problems**: Outliers often indicate underlying issues (memory leaks, resource exhaustion, etc.)
+
+**How Percentiles Handle Outliers:**
+- **p95**: Ignores the worst 5% of outliers, showing typical user experience
+- **p99**: Ignores only the worst 1%, capturing more edge cases
+- **Average**: Gets heavily influenced by even a few extreme outliers
+
 ### Key Terms Explained:
 - **TTFB (Time To First Byte)**: How long before the server starts sending response data
 - **Virtual Users (VUs)**: Simulated users running your test script concurrently
