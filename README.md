@@ -298,3 +298,19 @@ k6 run -o experimental-prometheus-rw script.js
 
 For detailed instructions, refer to the [k6 output guide for Grafana Cloud Prometheus](https://grafana.com/docs/k6/latest/results-output/real-time/grafana-cloud-prometheus/).
 
+-----
+Personal notes: 
+
+Start the services
+```
+docker compose -f compose.grafana-local-stack.monolithic.yaml up -d
+```
+
+If dashboard is frozen: 
+``` pkill -f k6 ```
+
+Run scripts: 
+```
+cd k6/foundations && K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_HOST=0.0.0.0 K6_WEB_DASHBOARD_PORT=5665 K6_WEB_DASHBOARD_PERIOD=2s K6_WEB_DASHBOARD_OPEN=true k6 run --linger 02.stages.js
+
+```
