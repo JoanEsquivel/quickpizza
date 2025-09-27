@@ -1,9 +1,11 @@
 import http from "k6/http";
 import { check, sleep } from "k6";
 import { Trend, Counter } from "k6/metrics";
-import { textSummary } from "https://jslib.k6.io/k6-summary/0.0.2/index.js";
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:3333';
+
+// The quickpizza API is used to generate pizzas.
+// These load tests emulates a user who is constantly requesting new recommended pizzas.
 
 // Multi-scenario test configuration:
 export const options = {
