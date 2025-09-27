@@ -174,10 +174,10 @@ export const options = {
 
   // QUALITY GATES: Apply to COMBINED results from both scenarios
   thresholds: {
-    // Infrastructure reliability across all scenarios
+    // Infrastructure reliability across all scenarios - Check guide doc for more details.
     http_req_failed: ['rate<0.01'],
 
-    // Performance requirements across all scenarios  
+    // Performance requirements across all scenarios  - Check guide doc for more details.
     http_req_duration: ['p(95)<500', 'p(99)<1000'],
 
     // Application-specific metrics across all scenarios
