@@ -79,33 +79,116 @@
  *    • Screenshot evidence: Visual proof of successful browser interactions
  *    • Cross-protocol validation: API backend + Browser frontend working together
  * 
- * 🎛️ DASHBOARD ANALYSIS GUIDE - HYBRID TESTING MONITORING:
+ * 🎛️ DASHBOARD ANALYSIS GUIDE - COMPREHENSIVE HYBRID TESTING REVIEW:
  * 
- *    OVERVIEW TAB - Multi-Protocol Performance:
- *    ⏰ 0s-10s: API smoke test + Browser testing running in parallel
- *    ⏰ 0s-15s: Browser scenario continues (UI validation)
- *    ⏰ 10s-15s: API stress test begins while browser test completes
- *    ⏰ 15s-30s: API stress test continues (backend performance focus)
+ *    📊 OVERVIEW TAB - Multi-Protocol Performance Orchestration:
  *    
- *    Key indicators for hybrid testing:
- *    ✅ Green: Both API and browser scenarios succeed
- *    ✅ Green: Consistent API performance during browser testing
- *    ✅ Green: Browser interactions complete successfully
- *    ⚠️  Warning: API performance degrades during browser testing (resource contention)
- *    ⚠️  Warning: Browser tests fail while API tests succeed (frontend issues)
- *    ❌ Critical: Both API and browser scenarios failing (system-wide problems)
+ *    ⭐ VIRTUAL USERS (VUs) CHART - Scenario Coordination Validation:
+ *    ⏰ 0s-10s: Expect 2 VUs total (1 API smoke + 1 Browser)
+ *    ⏰ 10s-15s: Expect 6 VUs total (1 Browser + 5 API stress)
+ *    ⏰ 15s-30s: Expect 5 VUs total (API stress only)
+ *    ✅ Success Pattern: Clean VU transitions at 10s and 15s marks
+ *    ❌ Failure Pattern: VU count doesn't match expected orchestration
  * 
- *    TIMINGS TAB - Protocol-Specific Analysis:
- *    • HTTP metrics: Standard API request timing analysis
- *    • Browser metrics: Page load times, interaction delays
- *    • Resource contention: Impact of browser testing on API performance
- *    • Cross-protocol timing: Correlation between API and browser performance
+ *    ⭐ HTTP REQUEST RATE - API Activity Tracking (Browser doesn't count as HTTP):
+ *    ⏰ 0s-10s: ~1 req/s (API smoke scenario only)
+ *    ⏰ 10s-30s: ~5 req/s (API stress scenario)
+ *    ⏰ Total Expected: ~60 HTTP requests (API scenarios combined)
+ *    ✅ Success Pattern: Steady rate within each phase, clear increase at 10s
+ *    ❌ Failure Pattern: Rate drops during browser phases (resource contention)
  * 
- *    SUMMARY TAB - Hybrid Results Assessment:
- *    • Combined checks: Success rate across both API and browser scenarios
- *    • Protocol separation: Distinguish API metrics from browser metrics
- *    • Resource usage: Memory and CPU impact of hybrid testing
- *    • Scenario completion: All three scenarios should complete successfully
+ *    ⭐ HTTP REQUEST DURATION - Cross-Protocol Performance Impact:
+ *    ⏰ 0s-10s: Baseline API performance (with browser running in parallel)
+ *    ⏰ 10s-15s: Peak load period (API stress + browser simultaneously)
+ *    ⏰ 15s-30s: Pure API performance (no browser interference)
+ *    ✅ Success Pattern: p95 < 500ms throughout, minimal phase differences
+ *    ⚠️ Warning Pattern: API slower during browser phases (10-20% degradation)
+ *    ❌ Critical Pattern: Significant spikes at 10s/15s transitions
+ * 
+ *    ⭐ HTTP REQUEST FAILED RATE - Reliability Under Mixed Workloads:
+ *    ✅ Target: 0% failures throughout entire 30-second test
+ *    ⚠️ Warning: Any failures during 0s-15s (resource contention)
+ *    ❌ Critical: Failures correlate with browser activity periods
+ * 
+ *    🕰️ TIMINGS TAB - Protocol-Specific Deep Dive Analysis:
+ * 
+ *    ⭐ REQUEST WAITING (TTFB) - Backend Performance Consistency:
+ *    • Phase Comparison Strategy: Compare 0s-10s vs 10s-15s vs 15s-30s
+ *    • Resource Sharing Test: Should remain consistent across all phases
+ *    ✅ Success: Stable TTFB regardless of browser activity
+ *    ❌ Failure: TTFB spikes during browser testing phases
+ * 
+ *    ⭐ REQUEST CONNECTING - Network Resource Competition:
+ *    • Browser Impact: May increase during 0s-15s (browser also connecting)
+ *    • Connection Pool: Monitor for connection exhaustion
+ *    ✅ Success: < 10ms connecting time throughout
+ *    ⚠️ Warning: Higher connecting times during browser phases
+ * 
+ *    ⭐ REQUEST DURATION BREAKDOWN - Comprehensive Timing Analysis:
+ *    • Blocked Time: Should remain minimal (< 1ms)
+ *    • Sending Time: Should be consistent (< 10ms)
+ *    • Receiving Time: Monitor for bandwidth competition with browser
+ *    ✅ Success: All timing phases remain within normal ranges
+ *    ❌ Failure: Any timing phase shows significant degradation during browser activity
+ * 
+ *    📊 SUMMARY TAB - Comprehensive Hybrid Results Assessment:
+ * 
+ *    ⭐ CHECKS SUCCESS RATE - Cross-Protocol Validation (Target: >95%):
+ *    • API Checks: "✅ API: Pizza creation successful" (from getPizza function)
+ *    • Browser Checks: "✅ BROWSER: Homepage header correct" (from checkFrontend)
+ *    • Browser Checks: "✅ BROWSER: Pizza recommendations generated" (from checkFrontend)
+ *    ✅ Success: >95% combined success rate across all protocols
+ *    ⚠️ Warning: 90-95% success (investigate failing protocol)
+ *    ❌ Critical: <90% success (system-wide issues)
+ * 
+ *    ⭐ CUSTOM METRICS - Business Logic Validation:
+ *    • quickpizza_number_of_pizzas: Expected ~60 total (API scenarios only)
+ *    • quickpizza_ingredients: Average < 8 ingredients (quality consistency)
+ *    ✅ Success: Metrics match expected API activity levels
+ *    ❌ Failure: Pizza count doesn't match HTTP request count
+ * 
+ *    ⭐ RESOURCE USAGE INDICATORS - System Capacity Analysis:
+ *    • iteration_duration: Browser iterations longer than API iterations
+ *    • data_received/sent: Higher during browser phases (page resources)
+ *    • vus_max: Should reach 6 during peak period (10s-15s)
+ *    ✅ Success: Resource usage patterns match scenario expectations
+ *    ⚠️ Warning: Continuously increasing memory usage
+ * 
+ *    🔍 PHASE-BY-PHASE DASHBOARD ANALYSIS STRATEGY:
+ * 
+ *    🔍 PHASE 1 (0s-10s): Parallel API + Browser Baseline
+ *    • Dashboard Focus: 2 VUs, ~1 req/s, both API and browser checks
+ *    • Key Question: Does browser testing impact API performance?
+ *    • Success Indicators: Stable API metrics, successful browser interactions
+ *    • Red Flags: API slowdown, browser check failures, resource spikes
+ * 
+ *    ⚡ PHASE 2 (10s-15s): Peak Mixed Load Critical Period
+ *    • Dashboard Focus: 6 VUs, ~5 req/s, maximum resource utilization
+ *    • Key Question: Can system handle peak mixed workload?
+ *    • Success Indicators: Maintained performance under peak load
+ *    • Red Flags: Performance degradation, error spikes, resource exhaustion
+ * 
+ *    🎯 PHASE 3 (15s-30s): Pure API Performance Comparison
+ *    • Dashboard Focus: 5 VUs, ~5 req/s, API-only resource usage
+ *    • Key Question: How much does browser testing impact API performance?
+ *    • Success Indicators: Improved/consistent API performance without browser
+ *    • Analysis: Compare this phase to Phase 1 for browser impact assessment
+ * 
+ *    🚨 CRITICAL RED FLAGS - Immediate Investigation Required:
+ *    ❌ API failures during browser testing phases (resource contention)
+ *    ❌ Significant response time spikes at 10s or 15s transitions
+ *    ❌ Browser scenario terminating early (< 15s duration)
+ *    ❌ VU scaling not following expected pattern (2 → 6 → 5)
+ *    ❌ Checks dropping below 95% (cross-protocol validation failing)
+ *    ❌ Memory usage continuously increasing (resource leaks)
+ * 
+ *    💡 DASHBOARD ANALYSIS PRO TIPS:
+ *    • Use Timeline Markers: Note 0s, 10s, 15s, 30s transition points
+ *    • Compare Phases: Look for performance differences between mixed and pure API
+ *    • Resource Correlation: Watch CPU/memory spikes during browser activity
+ *    • Screenshot Verification: Confirm screenshot.png creation (visual evidence)
+ *    • Console Monitoring: Watch for browser-specific error messages
+ *    • Cross-Reference: Correlate dashboard metrics with console log timestamps
  * 
  * 🔍 COMPOSABILITY & HYBRID TESTING DEEP DIVE:
  * 
